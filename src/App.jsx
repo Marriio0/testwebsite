@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, createContext, useContext } from 'react';
 
-const API = "http://192.168.1.16:8000/api";
+const API = "https://lumpiness-numeric-enviable.ngrok-free.dev/api";
 const AuthCtx = createContext(null);
 
 const useAuth = () => useContext(AuthCtx);
