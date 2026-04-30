@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, createContext, useContext } from 'react';
 
-const API = import.meta.env.VITE_API_URL || "https://lumpiness-numeric-enviable.ngrok-free.dev";
+const API = import.meta.env.VITE_API_URL || "https://lumpiness-numeric-enviable.ngrok-free.dev/api";
 const AuthCtx = createContext(null);
 
 const useAuth = () => useContext(AuthCtx);
