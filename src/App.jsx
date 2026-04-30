@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, createContext, useContext } from 'react';
 
-const API = import.meta.env.VITE_API_URL || "https://lumpiness-numeric-enviable.ngrok-free.dev/api";
+const API = import.meta.env.VITE_API_URL || "https://lumpiness-numeric-enviable.ngrok-free.dev";
 const AuthCtx = createContext(null);
 
 const useAuth = () => useContext(AuthCtx);
@@ -288,7 +288,7 @@ const AuthPage = ({ onLogin }) => {
       const payload = mode === "login" ? { email: form.email, password: form.password } : form;
       const res = await fetch(`${API}${endpoint}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "1" },
         body: JSON.stringify(payload),
       });
       const data = await res.json();
@@ -311,7 +311,7 @@ const AuthPage = ({ onLogin }) => {
       }
       onLogin(data.user, data.token);
     } catch (e) {
-      setErr(e?.message || "Erreur réseau");
+      setErr(e?.message === "Failed to fetch" ? "Impossible de contacter le serveur — vérifiez que le backend est démarré." : (e?.message || "Erreur réseau"));
     } finally { setLoading(false); }
   };
 
@@ -1180,7 +1180,7 @@ const AdminPanel = ({ toast }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("all");
-  const [newCodeRole, setNewCodeRole] = useState("etudiant");
+  const [newCodeRole, setNewCodeRole] = useState("encadrant");
   const [generatingCode, setGeneratingCode] = useState(false);
   const [filieresList, setFilieresList] = useState([]);
 
@@ -1389,7 +1389,6 @@ const AdminPanel = ({ toast }) => {
             <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#0f172a", whiteSpace: "nowrap" }}>Générer un code pour :</p>
             <select value={newCodeRole} onChange={e => setNewCodeRole(e.target.value)}
               style={{ padding: "8px 12px", border: "1.5px solid #e2e8f0", borderRadius: 8, fontSize: 13, color: "#0f172a", background: "#fafafa", outline: "none", appearance: "none", minWidth: 130 }}>
-              <option value="etudiant">Étudiant</option>
               <option value="encadrant">Encadrant</option>
               <option value="jury">Jury</option>
             </select>
@@ -1586,7 +1585,6 @@ const AdminPanel = ({ toast }) => {
           </div>
           <Field label="Rôle">
             <Select value={newRole} onChange={e => setNewRole(e.target.value)}>
-              <option value="etudiant">Étudiant</option>
               <option value="encadrant">Encadrant</option>
               <option value="jury">Jury</option>
               <option value="admin">Admin</option>
