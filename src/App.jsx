@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, createContext, useContext } from 'react';
 
-const API = "https://lumpiness-numeric-enviable.ngrok-free.dev/api";
+const API = import.meta.env.VITE_API_URL || "https://lumpiness-numeric-enviable.ngrok-free.dev/api";
 const AuthCtx = createContext(null);
 
 const useAuth = () => useContext(AuthCtx);
@@ -260,7 +260,7 @@ const AuthPage = ({ onLogin }) => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("pfe_token") || "";
-    const headers = { "Accept": "application/json" };
+    const headers = { "Accept": "application/json", "ngrok-skip-browser-warning": "1" };
     if (storedToken) headers["Authorization"] = `Bearer ${storedToken}`;
     fetch(`${API}/filieres`, { headers })
       .then(async r => {
@@ -1308,7 +1308,7 @@ const AdminPanel = ({ toast }) => {
           { key: "users",    label: "Utilisateurs",    count: users.filter(u=>u.status==="approved").length },
           { key: "pending",  label: "En attente",      count: pendingUsers.length, alert: pendingUsers.length > 0 },
           { key: "codes",    label: "Codes invitation",count: inviteCodes.filter(c=>!c.used).length },
-          { key: "filieres", label: "Filières",        count: filieres.length },
+          { key: "filieres", label: "Filières",        count: filieresList.length },
         ].map(t => (
           <button key={t.key} onClick={() => setAdminTab(t.key)} style={{
             padding: "9px 18px", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 700,
@@ -1345,7 +1345,10 @@ const AdminPanel = ({ toast }) => {
                     <div style={{ flex: 1 }}>
                       <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#0f172a" }}>{u.nom}</p>
                       <p style={{ margin: "2px 0 0", fontSize: 12, color: "#94a3b8" }}>{u.email}</p>
-                      {u.filiere && <p style={{ margin: "2px 0 0", fontSize: 11, color: "#b0b8c8" }}>{u.filiere}{u.niveau ? ` · ${u.niveau}` : ""}</p>}
+                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 3 }}>
+                        {u.cne && <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 6, background: "#f1f5f9", color: "#475569", fontFamily: "monospace" }}>CNE: {u.cne}</span>}
+                        {u.filiere && <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 6, background: "#f1f5f9", color: "#64748b" }}>{u.filiere}{u.niveau ? ` · ${u.niveau}` : ""}</span>}
+                      </div>
                     </div>
                     <span style={{ fontSize: 11, fontWeight: 700, padding: "4px 12px", borderRadius: 20, background: rbg, color: rc }}>{u.role}</span>
                     <span style={{ fontSize: 11, fontWeight: 700, padding: "4px 12px", borderRadius: 20, background: "#fffbeb", color: "#b45309", border: "1px solid #fde68a" }}>⏳ En attente</span>
