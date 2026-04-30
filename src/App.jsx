@@ -826,41 +826,36 @@ const RapportDetail = ({ rapport: initialRapport, onClose, onUpdate, toast }) =>
             </div>
           )}
 
-          {/* DÉCISION — jury et admin uniquement */}
-          {canValidate && (
-            <div style={{ marginBottom: 20 }}>
-              <p style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1 }}>Décision</p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                {[
-                  { d: "valide",  label: "Valider",  icon: "✓", active: "#16a34a", light: "#f0fdf4", border: "#22c55e" },
-                  { d: "refuse",  label: "Refuser",  icon: "✕", active: "#dc2626", light: "#fff5f5", border: "#ef4444" },
+          {/* DÉCISION + STATUT — section unifiée */}
+          {(canValidate || canStatut) && (
+            <div style={{ marginBottom: 20, padding: "16px", background: "#f8fafc", borderRadius: 14, border: "1.5px solid #f0f0f0" }}>
+              <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1 }}>Décision</p>
+              <div style={{ display: "grid", gridTemplateColumns: canValidate && canStatut ? "1fr 1fr 1fr" : canValidate ? "1fr 1fr" : "1fr 1fr", gap: 8 }}>
+                {canValidate && [
+                  { d: "valide", label: "Valider", icon: "✓", active: "#16a34a", light: "#f0fdf4", border: "#bbf7d0" },
+                  { d: "refuse", label: "Refuser", icon: "✕", active: "#dc2626", light: "#fff5f5", border: "#fecaca" },
                 ].map(({ d, label, icon, active, light, border }) => (
                   <button key={d} onClick={() => decide(d)} disabled={!!loadingVal}
-                    style={{ padding: "13px 16px", borderRadius: 12, border: `2px solid ${border}`, background: loadingVal === d ? light : "#fff", color: active, fontWeight: 700, fontSize: 14, cursor: loadingVal ? "wait" : "pointer", transition: "all 0.18s", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, opacity: loadingVal && loadingVal !== d ? 0.5 : 1 }}
+                    style={{ padding: "11px 10px", borderRadius: 10, border: `1.5px solid ${border}`, background: loadingVal === d ? light : "#fff", color: active, fontWeight: 700, fontSize: 13, cursor: loadingVal ? "wait" : "pointer", transition: "all 0.18s", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, opacity: loadingVal && loadingVal !== d ? 0.5 : 1 }}
                     onMouseEnter={e => { if (!loadingVal) e.currentTarget.style.background = light; }}
                     onMouseLeave={e => { if (!loadingVal) e.currentTarget.style.background = "#fff"; }}
                   >
-                    <span style={{ width: 26, height: 26, borderRadius: 8, background: active, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 900 }}>{icon}</span>
-                    {loadingVal === d ? "En cours..." : label}
+                    <span style={{ width: 22, height: 22, borderRadius: 6, background: active, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 900, flexShrink: 0 }}>{icon}</span>
+                    {loadingVal === d ? "..." : label}
                   </button>
                 ))}
-              </div>
-            </div>
-          )}
-
-          {/* STATUT — jury et admin uniquement */}
-          {canStatut && (
-            <div style={{ marginBottom: 20, padding: "14px 16px", background: "#f8fafc", borderRadius: 14, border: "1.5px solid #f0f0f0" }}>
-              <p style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1 }}>Changer le statut</p>
-              <div style={{ display: "flex", gap: 8 }}>
-                <select value={newStatut} onChange={e => setNewStatut(e.target.value)}
-                  style={{ flex: 1, padding: "9px 12px", border: "1.5px solid #e2e8f0", borderRadius: 8, fontSize: 13, color: "#0f172a", background: "#fff", outline: "none", appearance: "none" }}>
-                  {Object.entries(STATUT_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-                </select>
-                <button onClick={applyStatut} disabled={loadingStatut || newStatut === rapport.statut}
-                  style={{ padding: "9px 20px", borderRadius: 8, border: "none", background: newStatut !== rapport.statut ? "#0f172a" : "#f1f5f9", color: newStatut !== rapport.statut ? "#fff" : "#94a3b8", fontWeight: 700, fontSize: 13, cursor: newStatut !== rapport.statut ? "pointer" : "default", transition: "all 0.2s", whiteSpace: "nowrap" }}>
-                  {loadingStatut ? "..." : "Appliquer"}
-                </button>
+                {canStatut && (
+                  <div style={{ display: "flex", gap: 6, gridColumn: canValidate ? "3 / 4" : "1 / 3" }}>
+                    <select value={newStatut} onChange={e => setNewStatut(e.target.value)}
+                      style={{ flex: 1, padding: "9px 10px", border: "1.5px solid #e2e8f0", borderRadius: 10, fontSize: 12, color: "#0f172a", background: "#fff", outline: "none", appearance: "none", cursor: "pointer" }}>
+                      {Object.entries(STATUT_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                    </select>
+                    <button onClick={applyStatut} disabled={loadingStatut || newStatut === rapport.statut}
+                      style={{ padding: "9px 14px", borderRadius: 10, border: "none", background: newStatut !== rapport.statut ? "#0f172a" : "#e2e8f0", color: newStatut !== rapport.statut ? "#fff" : "#94a3b8", fontWeight: 700, fontSize: 12, cursor: newStatut !== rapport.statut ? "pointer" : "default", transition: "all 0.2s", whiteSpace: "nowrap", flexShrink: 0 }}>
+                      {loadingStatut ? "..." : "✓"}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}
