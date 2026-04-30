@@ -483,6 +483,7 @@ const AuthPage = ({ onLogin }) => {
             </div>
           </div>
 
+          {(form.role === "encadrant" || form.role === "jury") && (
           <div style={{ marginBottom: 16 }}>
             {lbl("Code d'invitation *")}
             <div style={{ position: "relative" }}>
@@ -493,14 +494,13 @@ const AuthPage = ({ onLogin }) => {
                 maxLength={14}
                 {...inp({ fontFamily: "monospace", letterSpacing: 2, textTransform: "uppercase" })}
               />
-              <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 11, color: "#94a3b8" }}>
-                🔑
-              </span>
+              <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 16 }}>🔑</span>
             </div>
             <p style={{ margin: "5px 0 0", fontSize: 11, color: "#94a3b8" }}>Demandez ce code à l'administrateur avant de vous inscrire.</p>
           </div>
+          )}
 
-          {form.role === "etudiant" && (
+                    {form.role === "etudiant" && (
             <div style={{ padding: 16, background: "#eff6ff", borderRadius: 10, border: "1px solid #bfdbfe", marginBottom: 16 }}>
               <div style={{ marginBottom: 12 }}>
                 {lbl("CNE")}
@@ -1340,21 +1340,38 @@ const AdminPanel = ({ toast }) => {
               {pendingUsers.map(u => {
                 const [rc, rbg] = ROLE_COLORS_MAP[u.role] || ["#888","#f0f0f0"];
                 return (
-                  <div key={u.id} style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", background: "#fff", borderRadius: 14, border: "1.5px solid #fde68a" }}>
-                    <Avatar name={u.nom} size={42} color={rc} bg={rbg} />
-                    <div style={{ flex: 1 }}>
-                      <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#0f172a" }}>{u.nom}</p>
-                      <p style={{ margin: "2px 0 0", fontSize: 12, color: "#94a3b8" }}>{u.email}</p>
-                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 3 }}>
-                        {u.cne && <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 6, background: "#f1f5f9", color: "#475569", fontFamily: "monospace" }}>CNE: {u.cne}</span>}
-                        {u.filiere && <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 6, background: "#f1f5f9", color: "#64748b" }}>{u.filiere}{u.niveau ? ` · ${u.niveau}` : ""}</span>}
+                  <div key={u.id} style={{ background: "#fff", borderRadius: 14, border: "1.5px solid #fde68a", overflow: "hidden" }}>
+                    {/* Header */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", borderBottom: "1px solid #fef9c3" }}>
+                      <Avatar name={u.nom} size={44} color={rc} bg={rbg} />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <p style={{ margin: 0, fontWeight: 800, fontSize: 15, color: "#0f172a" }}>{u.nom}</p>
+                          <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 10px", borderRadius: 20, background: rbg, color: rc }}>{u.role}</span>
+                          <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 10px", borderRadius: 20, background: "#fffbeb", color: "#b45309", border: "1px solid #fde68a" }}>⏳ En attente</span>
+                        </div>
+                        <p style={{ margin: "3px 0 0", fontSize: 13, color: "#64748b" }}>{u.email}</p>
+                      </div>
+                      <div style={{ display: "flex", gap: 8 }}>
+                        <Btn variant="success" style={{ padding: "8px 18px" }} onClick={() => approveUser(u)}>✓ Approuver</Btn>
+                        <Btn variant="danger"  style={{ padding: "8px 18px" }} onClick={() => rejectUser(u)}>✕ Refuser</Btn>
                       </div>
                     </div>
-                    <span style={{ fontSize: 11, fontWeight: 700, padding: "4px 12px", borderRadius: 20, background: rbg, color: rc }}>{u.role}</span>
-                    <span style={{ fontSize: 11, fontWeight: 700, padding: "4px 12px", borderRadius: 20, background: "#fffbeb", color: "#b45309", border: "1px solid #fde68a" }}>⏳ En attente</span>
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <Btn variant="success" style={{ padding: "7px 16px", fontSize: 13 }} onClick={() => approveUser(u)}>✓ Approuver</Btn>
-                      <Btn variant="danger"  style={{ padding: "7px 16px", fontSize: 13 }} onClick={() => rejectUser(u)}>✕ Refuser</Btn>
+                    {/* Details grid */}
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 0 }}>
+                      {[
+                        { label: "CNE",         value: u.cne,          icon: "🪪", mono: true },
+                        { label: "Filière",      value: u.filiere,      icon: "🎓" },
+                        { label: "Niveau",       value: u.niveau,       icon: "📚" },
+                        { label: "Grade",        value: u.grade,        icon: "🏅" },
+                        { label: "Département",  value: u.departement,  icon: "🏛️" },
+                        { label: "Inscrit le",   value: u.created_at ? new Date(u.created_at).toLocaleDateString("fr-FR") : null, icon: "📅" },
+                      ].filter(f => f.value).map(f => (
+                        <div key={f.label} style={{ padding: "10px 16px", borderRight: "1px solid #fef9c3", borderTop: "1px solid #fef9c3" }}>
+                          <p style={{ margin: 0, fontSize: 10, fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 0.5 }}>{f.icon} {f.label}</p>
+                          <p style={{ margin: "3px 0 0", fontSize: 13, fontWeight: 700, color: "#0f172a", fontFamily: f.mono ? "monospace" : "inherit" }}>{f.value}</p>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 );
