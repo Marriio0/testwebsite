@@ -1,0 +1,1 @@
+Keep the bearer token out of frontend source in production. Use backend-issued auth or inject it via secure runtime config.
