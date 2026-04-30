@@ -1902,3 +1902,4 @@ export default function App() {
 
   if (!user || !token) return <AuthCtx.Provider value={{ user: null, token: null, logout }}><GlobalStyles /><AuthPage onLogin={login} /></AuthCtx.Provider>;
   return <AuthCtx.Provider value={{ user, token, logout }}><GlobalStyles /><Dashboard /></AuthCtx.Provider>;
+}
