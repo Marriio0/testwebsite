@@ -826,36 +826,22 @@ const RapportDetail = ({ rapport: initialRapport, onClose, onUpdate, toast }) =>
             </div>
           )}
 
-          {/* DÉCISION + STATUT — section unifiée */}
+          {/* DÉCISION — dropdown unifié */}
           {(canValidate || canStatut) && (
-            <div style={{ marginBottom: 20, padding: "16px", background: "#f8fafc", borderRadius: 14, border: "1.5px solid #f0f0f0" }}>
-              <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1 }}>Décision</p>
-              <div style={{ display: "grid", gridTemplateColumns: canValidate && canStatut ? "1fr 1fr 1fr" : canValidate ? "1fr 1fr" : "1fr 1fr", gap: 8 }}>
-                {canValidate && [
-                  { d: "valide", label: "Valider", icon: "✓", active: "#16a34a", light: "#f0fdf4", border: "#bbf7d0" },
-                  { d: "refuse", label: "Refuser", icon: "✕", active: "#dc2626", light: "#fff5f5", border: "#fecaca" },
-                ].map(({ d, label, icon, active, light, border }) => (
-                  <button key={d} onClick={() => decide(d)} disabled={!!loadingVal}
-                    style={{ padding: "11px 10px", borderRadius: 10, border: `1.5px solid ${border}`, background: loadingVal === d ? light : "#fff", color: active, fontWeight: 700, fontSize: 13, cursor: loadingVal ? "wait" : "pointer", transition: "all 0.18s", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, opacity: loadingVal && loadingVal !== d ? 0.5 : 1 }}
-                    onMouseEnter={e => { if (!loadingVal) e.currentTarget.style.background = light; }}
-                    onMouseLeave={e => { if (!loadingVal) e.currentTarget.style.background = "#fff"; }}
-                  >
-                    <span style={{ width: 22, height: 22, borderRadius: 6, background: active, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 900, flexShrink: 0 }}>{icon}</span>
-                    {loadingVal === d ? "..." : label}
-                  </button>
-                ))}
-                {canStatut && (
-                  <div style={{ display: "flex", gap: 6, gridColumn: canValidate ? "3 / 4" : "1 / 3" }}>
-                    <select value={newStatut} onChange={e => setNewStatut(e.target.value)}
-                      style={{ flex: 1, padding: "9px 10px", border: "1.5px solid #e2e8f0", borderRadius: 10, fontSize: 12, color: "#0f172a", background: "#fff", outline: "none", appearance: "none", cursor: "pointer" }}>
-                      {Object.entries(STATUT_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-                    </select>
-                    <button onClick={applyStatut} disabled={loadingStatut || newStatut === rapport.statut}
-                      style={{ padding: "9px 14px", borderRadius: 10, border: "none", background: newStatut !== rapport.statut ? "#0f172a" : "#e2e8f0", color: newStatut !== rapport.statut ? "#fff" : "#94a3b8", fontWeight: 700, fontSize: 12, cursor: newStatut !== rapport.statut ? "pointer" : "default", transition: "all 0.2s", whiteSpace: "nowrap", flexShrink: 0 }}>
-                      {loadingStatut ? "..." : "✓"}
-                    </button>
-                  </div>
-                )}
+            <div style={{ marginBottom: 20, padding: "16px 18px", background: "#f8fafc", borderRadius: 14, border: "1.5px solid #ede9fe" }}>
+              <p style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1 }}>Décision</p>
+              <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                <div style={{ position: "relative", flex: 1 }}>
+                  <select value={newStatut} onChange={e => setNewStatut(e.target.value)}
+                    style={{ width: "100%", padding: "10px 36px 10px 14px", border: "1.5px solid #e2e8f0", borderRadius: 10, fontSize: 13, fontWeight: 600, color: "#0f172a", background: "#fff", outline: "none", appearance: "none", cursor: "pointer", boxSizing: "border-box" }}>
+                    {Object.entries(STATUT_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                  </select>
+                  <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: "#94a3b8", fontSize: 12 }}>▼</span>
+                </div>
+                <button onClick={applyStatut} disabled={loadingStatut || newStatut === rapport.statut}
+                  style={{ padding: "10px 22px", borderRadius: 10, border: "none", background: newStatut !== rapport.statut ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "#e2e8f0", color: newStatut !== rapport.statut ? "#fff" : "#94a3b8", fontWeight: 700, fontSize: 13, cursor: newStatut !== rapport.statut ? "pointer" : "default", transition: "all 0.2s", whiteSpace: "nowrap", boxShadow: newStatut !== rapport.statut ? "0 4px 12px rgba(99,102,241,0.3)" : "none" }}>
+                  {loadingStatut ? "..." : "Appliquer"}
+                </button>
               </div>
             </div>
           )}
