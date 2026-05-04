@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, createContext, useContext } from 'react';
 
 const API = import.meta.env.VITE_API_URL || "https://lumpiness-numeric-enviable.ngrok-free.dev/api";
 const AuthCtx = createContext(null);
+const DarkCtx = createContext({ dark: false, toggleDark: () => {} });
+const useDark = () => useContext(DarkCtx);
 
 const useAuth = () => useContext(AuthCtx);
 
@@ -584,19 +586,19 @@ const RapportCard = ({ rapport, onClick }) => {
   const cfg = STATUT_CONFIG[rapport.statut] || {};
   return (
     <div onClick={onClick}
-      style={{ background: "#fff", border: "1.5px solid #e2e8f0", borderRadius: 16, padding: "20px", cursor: "pointer", transition: "all 0.2s", display: "flex", flexDirection: "column", gap: 14 }}
+      style={{ background: D.card, border: `1.5px solid ${D.border}`, borderRadius: 16, padding: "20px", cursor: "pointer", transition: "all 0.2s", display: "flex", flexDirection: "column", gap: 14 }}
       onMouseEnter={e => { e.currentTarget.style.borderColor = "#6366f1"; e.currentTarget.style.boxShadow = "0 8px 30px rgba(99,102,241,0.1)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.transform = ""; }}>
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
-        <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#0f172a", lineHeight: 1.4, flex: 1 }}>{rapport.titre}</h3>
+        <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: D.text, lineHeight: 1.4, flex: 1 }}>{rapport.titre}</h3>
         <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: cfg.bg, color: cfg.color, whiteSpace: "nowrap", flexShrink: 0, border: `1px solid ${cfg.color}22` }}>
           {cfg.label}
         </span>
       </div>
 
       {rapport.description && (
-        <p style={{ margin: 0, fontSize: 13, color: "#64748b", lineHeight: 1.6, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+        <p style={{ margin: 0, fontSize: 13, color: D.sub, lineHeight: 1.6, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
           {rapport.description}
         </p>
       )}
@@ -1651,8 +1653,30 @@ const AddUserModal = ({ onClose, onCreated, toast }) => {
   );
 };
 
+
+// ── DARK TOGGLE ───────────────────────────────────────────────────────
+const DarkToggle = () => {
+  const { dark, toggleDark } = useDark();
+  return (
+    <button onClick={toggleDark} title={dark ? "Mode clair" : "Mode sombre"}
+      style={{ width: 36, height: 36, borderRadius: 8, border: "1.5px solid #e2e8f0", background: dark ? "#1e293b" : "#f8fafc", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s", flexShrink: 0 }}>
+      {dark
+        ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" stroke="#fbbf24" strokeWidth="2"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round"/></svg>
+        : <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      }
+    </button>
+  );
+};
+
 const Dashboard = () => {
   const { user, token, logout } = useAuth();
+  const { dark } = useDark();
+  const D = {
+    bg: dark ? "#0f172a" : "#f8fafc", topbar: dark ? "#1e293b" : "#fff",
+    card: dark ? "#1e293b" : "#fff", border: dark ? "#334155" : "#e2e8f0",
+    text: dark ? "#f1f5f9" : "#0f172a", sub: dark ? "#94a3b8" : "#64748b",
+    input: dark ? "#0f172a" : "#fff", inputBorder: dark ? "#475569" : "#e2e8f0",
+  };
   const [tab, setTab] = useState("rapports");
   const [rapports, setRapports] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1713,17 +1737,17 @@ const Dashboard = () => {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", animation: "fadeIn 0.3s ease" }}>
+    <div style={{ minHeight: "100vh", background: D.bg, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", animation: "fadeIn 0.3s ease" }}>
       {toast && <Toast {...toast} onClose={() => setToast(null)} />}
 
       {/* ── TOPBAR ── */}
-      <div style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: "0 28px", height: 62, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", animation: "slideDown 0.3s ease" }}>
+      <div style={{ background: D.topbar, borderBottom: `1px solid ${D.border}`, padding: "0 28px", height: 62, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", animation: "slideDown 0.3s ease" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg, #6366f1, #8b5cf6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3L22 8.5V15.5L12 21L2 15.5V8.5L12 3Z" stroke="white" strokeWidth="2" strokeLinejoin="round"/><path d="M12 3V21M2 8.5L12 14L22 8.5" stroke="white" strokeWidth="2" strokeLinejoin="round"/></svg>
             </div>
-            <span style={{ fontSize: 16, fontWeight: 800, color: "#0f172a", letterSpacing: -0.4 }}>PFE Manager</span>
+            <span style={{ fontSize: 16, fontWeight: 800, color: D.text, letterSpacing: -0.4 }}>PFE Manager</span>
           </div>
 
           <nav style={{ display: "flex", gap: 2 }}>
@@ -1733,8 +1757,8 @@ const Dashboard = () => {
             ].map(t => (
               <button key={t.key} onClick={() => setTab(t.key)} style={{
                 padding: "7px 16px", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, transition: "all 0.18s",
-                background: tab === t.key ? "#eef2ff" : "transparent",
-                color: tab === t.key ? "#6366f1" : "#64748b",
+                background: tab === t.key ? (dark?"#312e81":"#eef2ff") : "transparent",
+                color: tab === t.key ? "#6366f1" : D.sub,
               }}>{t.label}</button>
             ))}
           </nav>
@@ -1742,16 +1766,16 @@ const Dashboard = () => {
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{ textAlign: "right" }}>
-            <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#0f172a" }}>{user.nom}</p>
-            <p style={{ margin: 0, fontSize: 11, color: "#94a3b8" }}>{user.email}</p>
+            <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: D.text }}>{user.nom}</p>
+            <p style={{ margin: 0, fontSize: 11, color: D.sub }}>{user.email}</p>
           </div>
           <div style={{ width: 36, height: 36, borderRadius: "50%", background: `linear-gradient(135deg, ${ru.color}, ${ru.color}aa)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 14, fontWeight: 800 }}>
             {user.nom?.charAt(0).toUpperCase()}
           </div>
           <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: ru.bg, color: ru.color, border: `1px solid ${ru.color}33` }}>{ru.label}</span>
-          <button onClick={logout} style={{ padding: "7px 14px", borderRadius: 8, border: "1.5px solid #e2e8f0", background: "#fff", color: "#64748b", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.18s" }}
+          <button onClick={logout} style={{ padding: "7px 14px", borderRadius: 8, border: `1.5px solid ${D.border}`, background: D.topbar, color: D.sub, fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.18s" }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = "#ef4444"; e.currentTarget.style.color = "#ef4444"; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.color = "#64748b"; }}>
+            onMouseLeave={e => { e.currentTarget.style.borderColor = D.border; e.currentTarget.style.color = D.sub; }}>
             Déconnexion
           </button>
         </div>
@@ -1765,7 +1789,7 @@ const Dashboard = () => {
           <>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 28 }}>
               <div>
-                <h2 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 800, color: "#0f172a", letterSpacing: -0.4 }}>
+                <h2 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 800, color: D.text, letterSpacing: -0.4 }}>
                   {user.role === "etudiant" ? "Mes rapports" : "Tous les rapports"}
                 </h2>
                 <p style={{ margin: 0, fontSize: 13, color: "#94a3b8" }}>
@@ -1787,13 +1811,13 @@ const Dashboard = () => {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 28 }}>
               {STAT_CARDS.map(s => (
                 <div key={s.label} className="card-enter"
-                  style={{ background: "#fff", borderRadius: 16, padding: "18px 20px", border: `1.5px solid ${s.border}`, transition: "transform 0.2s, box-shadow 0.2s", cursor: "default" }}
+                  style={{ background: D.card, borderRadius: 16, padding: "18px 20px", border: `1.5px solid ${s.border}`, transition: "transform 0.2s, box-shadow 0.2s", cursor: "default" }}
                   onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = `0 12px 30px ${s.color}22`; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                     <div>
                       <p style={{ margin: "0 0 8px", fontSize: 11, color: s.color, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.8 }}>{s.label}</p>
-                      <p style={{ margin: 0, fontSize: 32, fontWeight: 900, color: "#0f172a", lineHeight: 1 }}>
+                      <p style={{ margin: 0, fontSize: 32, fontWeight: 900, color: D.text, lineHeight: 1 }}>
                         <AnimatedNumber value={s.val} />
                       </p>
                     </div>
@@ -1812,12 +1836,12 @@ const Dashboard = () => {
               <div style={{ flex: 1, position: "relative" }}>
                 <svg style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)" }} width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="#94a3b8" strokeWidth="2"/><path d="m21 21-4.35-4.35" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round"/></svg>
                 <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher un rapport..."
-                  style={{ width: "100%", padding: "10px 14px 10px 40px", border: "1.5px solid #e2e8f0", borderRadius: 10, fontSize: 14, color: "#0f172a", background: "#fff", outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+                  style={{ width: "100%", padding: "10px 14px 10px 40px", border: `1.5px solid ${D.inputBorder}`, borderRadius: 10, fontSize: 14, color: D.text, background: D.input, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
                   onFocus={e => e.target.style.borderColor = "#6366f1"}
                   onBlur={e => e.target.style.borderColor = "#e2e8f0"} />
               </div>
               <select value={filterStatut} onChange={e => setFilterStatut(e.target.value)}
-                style={{ padding: "10px 14px", border: "1.5px solid #e2e8f0", borderRadius: 10, fontSize: 13, color: "#374151", background: "#fff", outline: "none", fontFamily: "inherit", cursor: "pointer", minWidth: 160 }}>
+                style={{ padding: "10px 14px", border: `1.5px solid ${D.inputBorder}`, borderRadius: 10, fontSize: 13, color: D.text, background: D.input, outline: "none", fontFamily: "inherit", cursor: "pointer", minWidth: 160 }}>
                 <option value="all">Tous les statuts</option>
                 {Object.entries(STATUT_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
               </select>
@@ -1875,10 +1899,12 @@ const Dashboard = () => {
 export default function App() {
   const [user, setUser] = useState(() => { try { return JSON.parse(localStorage.getItem("pfe_user")); } catch { return null; } });
   const [token, setToken] = useState(() => localStorage.getItem("pfe_token"));
+  const [dark, setDark] = useState(() => localStorage.getItem("pfe_dark") === "1");
+  const toggleDark = () => setDark(d => { const n = !d; localStorage.setItem("pfe_dark", n ? "1" : "0"); return n; });
 
   const login = (u, t) => { setUser(u); setToken(t); localStorage.setItem("pfe_user", JSON.stringify(u)); localStorage.setItem("pfe_token", t); };
   const logout = () => { setUser(null); setToken(null); localStorage.removeItem("pfe_user"); localStorage.removeItem("pfe_token"); };
 
-  if (!user || !token) return <AuthCtx.Provider value={{ user: null, token: null, logout }}><GlobalStyles /><AuthPage onLogin={login} /></AuthCtx.Provider>;
-  return <AuthCtx.Provider value={{ user, token, logout }}><GlobalStyles /><Dashboard /></AuthCtx.Provider>;
+  if (!user || !token) return <DarkCtx.Provider value={{ dark, toggleDark }}><AuthCtx.Provider value={{ user: null, token: null, logout }}><GlobalStyles /><AuthPage onLogin={login} /></AuthCtx.Provider></DarkCtx.Provider>;
+  return <DarkCtx.Provider value={{ dark, toggleDark }}><AuthCtx.Provider value={{ user, token, logout }}><GlobalStyles /><Dashboard /></AuthCtx.Provider></DarkCtx.Provider>;
 }
