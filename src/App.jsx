@@ -402,7 +402,7 @@ const AuthPage = ({ onLogin }) => {
                 onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
                 onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.04)"}>
                 <div style={{ width: 6, height: 6, borderRadius: "50%", background: f.color, flexShrink: 0, boxShadow: `0 0 8px ${f.color}` }} />
-                <span style={{ fontSize: 13, color: D.sub }}>{f.label}</span>
+                <span style={{ fontSize: 13, color: "#94a3b8" }}>{f.label}</span>
               </div>
             ))}
           </div>
@@ -1672,16 +1672,10 @@ const Dashboard = () => {
   const { user, token, logout } = useAuth();
   const { dark } = useDark();
   const D = {
-    bg:          dark ? "#0f172a" : "#f8fafc",
-    topbar:      dark ? "#1e293b" : "#fff",
-    card:        dark ? "#1e293b" : "#fff",
-    border:      dark ? "#334155" : "#e2e8f0",
-    text:        dark ? "#f1f5f9" : "#0f172a",
-    sub:         dark ? "#94a3b8" : "#64748b",
-    input:       dark ? "#0f172a" : "#fff",
-    inputBorder: dark ? "#475569" : "#e2e8f0",
-    section:     dark ? "#0f172a" : "#f8fafc",
-    hover:       dark ? "#334155" : "#f8fafc",
+    bg: dark ? "#0f172a" : "#f8fafc", topbar: dark ? "#1e293b" : "#fff",
+    card: dark ? "#1e293b" : "#fff", border: dark ? "#334155" : "#e2e8f0",
+    text: dark ? "#f1f5f9" : "#0f172a", sub: dark ? "#94a3b8" : "#64748b",
+    input: dark ? "#0f172a" : "#fff", inputBorder: dark ? "#475569" : "#e2e8f0",
   };
   const [tab, setTab] = useState("rapports");
   const [rapports, setRapports] = useState([]);
@@ -1856,7 +1850,7 @@ const Dashboard = () => {
             {loading ? <Spinner /> : (
               <>
                 {filtered.length === 0 ? (
-                  <div style={{ textAlign: "center", padding: "80px 20px", background: D.bg }}>
+                  <div style={{ textAlign: "center", padding: "80px 20px" }}>
                     <div style={{ width: 64, height: 64, borderRadius: 20, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
                       <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="#94a3b8" strokeWidth="2"/><path d="M14 2v6h6" stroke="#94a3b8" strokeWidth="2"/></svg>
                     </div>
