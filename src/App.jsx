@@ -123,7 +123,6 @@ const api = async (path, opts = {}, token = null) => {
 const STATUT_CONFIG = {
   soumis:        { label: "Soumis",        color: "#178ce8", bg: "#e6f1fb" },
   en_correction: { label: "En correction", color: "#BA7517", bg: "#FAEEDA" },
-  resoumis:      { label: "Resoumis",      color: "#534AB7", bg: "#EEEDFE" },
   valide:        { label: "Validé",        color: "#3B6D11", bg: "#EAF3DE" },
   refuse:        { label: "Refusé",        color: "#A32D2D", bg: "#FCEBEB" },
 };
