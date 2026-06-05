@@ -249,6 +249,31 @@ const AUTH_STYLES = `
   }
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  
+  @media (max-width: 768px) {
+    .auth-left-enter {
+      flex: 1 1 100% !important;
+      height: auto !important;
+      min-height: 300px;
+      padding: 40px 24px !important;
+      position: relative !important;
+    }
+    
+    .auth-form-enter {
+      flex: 1 1 100% !important;
+      min-height: auto !important;
+      padding: 32px 20px !important;
+      width: 100% !important;
+    }
+    
+    h2 {
+      font-size: 24px !important;
+    }
+    
+    p {
+      font-size: 13px !important;
+    }
+  }
 `;
 
 const AuthPage = ({ onLogin }) => {
@@ -337,11 +362,11 @@ const AuthPage = ({ onLogin }) => {
   // BUG FIX 1: JSX structure was completely broken — left panel and right panel
   // were nested incorrectly. Fixed: both panels are direct children of the outer flex div.
   return (
-    <div style={{ minHeight: "100vh", display: "flex", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", alignItems: "flex-start" }}>
+    <div style={{ minHeight: "100vh", display: "flex", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", alignItems: "flex-start", flexWrap: "wrap", "@media (max-width: 768px)": { flexDirection: "column" } }}>
       <style>{AUTH_STYLES}</style>
 
       {/* ── LEFT: branding panel ── */}
-      <div className="auth-left-enter" style={{ flex: 1, background: "linear-gradient(-45deg, #0f0c29, #302b63, #1a1a4e, #0d1b4b)", backgroundSize: "400% 400%", animation: "gradientShift 8s ease infinite", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 56, position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
+      <div className="auth-left-enter" style={{ flex: "1 1 50%", background: "linear-gradient(-45deg, #0f0c29, #302b63, #1a1a4e, #0d1b4b)", backgroundSize: "400% 400%", animation: "gradientShift 8s ease infinite", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "56px", position: "sticky", top: 0, height: "100vh", overflow: "hidden", minWidth: 0, "@media (max-width: 768px)": { flex: "1 1 100%", height: "auto", minHeight: "300px", padding: "40px 24px", position: "relative" } }}>
 
         {/* subtle grid */}
         <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)", backgroundSize: "48px 48px", pointerEvents: "none" }} />
@@ -410,7 +435,7 @@ const AuthPage = ({ onLogin }) => {
       </div>
       {/* ── RIGHT: form panel ── */}
       {/* BUG FIX 1: This was incorrectly nested inside the left panel's content div */}
-      <div className="auth-form-enter" style={{ width: 460, background: "#fafafa", display: "flex", flexDirection: "column", justifyContent: "flex-start", padding: "52px 44px", overflowY: "auto", minHeight: "100vh" }}>
+      <div className="auth-form-enter" style={{ flex: "1 1 50%", background: "#fafafa", display: "flex", flexDirection: "column", justifyContent: "flex-start", padding: "52px 44px", overflowY: "auto", minHeight: "100vh", minWidth: 0, "@media (max-width: 768px)": { flex: "1 1 100%", minHeight: "auto", padding: "32px 20px", width: "100%" } }}>
 
         <div style={{ marginBottom: 36 }}>
           <p style={{ margin: "0 0 4px", fontSize: 12, fontWeight: 700, color: "#6366f1", textTransform: "uppercase", letterSpacing: 1 }}>
